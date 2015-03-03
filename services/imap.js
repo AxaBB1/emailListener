@@ -1,7 +1,9 @@
 var inbox = require("inbox");
 var MailParser = require("mailparser").MailParser;
 
-var mailparser = new MailParser();
+var mailparser = new MailParser({
+	streamAttachments: true
+});
 var client;
 
 exports.init = function(){
@@ -26,11 +28,9 @@ exports.init = function(){
 	
 	client.on("new", function(message){
 		console.log("A new message just shows up");
-		mailparser.on("end", function(mail_object){
-			console.log(mail_object);
-			//for(var i=0; i<mail_object.attachments.length; i++){
-			//	console.log(mail_object.attachments[i].fileName);
-			//}		
+		
+		mailparser.on("attachment", function(attachment, mail){
+			console.log(attachment.generatedFileName);
 		});
 		client.createMessageStream(message.UID).pipe(mailparser);
 
